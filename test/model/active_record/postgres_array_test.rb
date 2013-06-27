@@ -42,7 +42,7 @@ class PostgresArrayTest < ActiveSupport::TestCase
     assert_equal array[0], "Новое имя"
     assert_equal array.pg_string, string
   end
-  
+
   test "unescape strings with double quote" do
     string = '{abc,"de\\",f"}'
     array = Globalize::Model::ActiveRecord::PostgresArray.new(string)
@@ -70,7 +70,7 @@ class PostgresArrayTest < ActiveSupport::TestCase
     assert_equal array[1], nil
     assert_equal array.pg_string, string
   end
-  
+
   test "integration" do
     string = '{"<h1 id=\\"h1title\\" class=\\"title\\">{{ collection.page_title }}</h1>
  {% if collection.description != nil %}
@@ -173,7 +173,7 @@ class PostgresArrayTest < ActiveSupport::TestCase
 
  "}'
     array = Globalize::Model::ActiveRecord::PostgresArray.new(string)
-    assert_equal array.pg_string, string
+    assert_equal array.pg_string, string.gsub(/}/, '\}').gsub(/{/, '\{').sub(/\A\\/,'').gsub(/\\}\z/,'}')
   end
-  
+
 end

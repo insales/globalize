@@ -3,7 +3,7 @@ require 'rubygems'
 require 'test/unit'
 require 'active_support'
 require 'active_support/test_case'
-require 'mocha'
+require 'mocha/setup'
 
 $LOAD_PATH << File.expand_path( File.dirname(__FILE__) + '/../lib' )
 
@@ -12,6 +12,7 @@ class ActiveSupport::TestCase
     ::ActiveRecord::Migration.verbose = false   # Quiet down the migration engine
     ::ActiveRecord::Base.establish_connection({
       :adapter  => 'postgresql',
+      :host     => '127.0.0.1',
       :database => 'globalize2_test',
       :encoding => 'utf8',
       :username => 'pgsql'

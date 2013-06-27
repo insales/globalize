@@ -12,12 +12,12 @@ module Globalize
 end
 
 class ChainedTest < ActiveSupport::TestCase
-  
+
   test "instantiates a chained backend and sets test as backend" do
     assert_nothing_raised { I18n.chain_backends }
     assert_instance_of Globalize::Backend::Chain, I18n.backend
   end
-  
+
   test "passes all given arguments to the chained backends #initialize method" do
     Globalize::Backend::Chain.expects(:new).with(:spec, :simple)
     I18n.chain_backends :spec, :simple
@@ -30,9 +30,9 @@ end
 
 class AddChainedTest < ActiveSupport::TestCase
   def setup
-    I18n.backend = Globalize::Backend::Chain.new  
+    I18n.backend = Globalize::Backend::Chain.new
   end
-  
+
   test "accepts an instance of a backend" do
     assert_nothing_raised { I18n.backend.add Globalize::Backend::Dummy.new }
     assert_instance_of Globalize::Backend::Dummy, I18n.backend.send(:backends).first
@@ -51,10 +51,10 @@ class AddChainedTest < ActiveSupport::TestCase
   test "accepts any number of backend instances, classes or symbols" do
     assert_nothing_raised { I18n.backend.add Globalize::Backend::Dummy.new, Globalize::Backend::Dummy, :dummy }
     assert_instance_of Globalize::Backend::Dummy, I18n.backend.send(:backends).first
-    assert_equal [ Globalize::Backend::Dummy, Globalize::Backend::Dummy, Globalize::Backend::Dummy ], 
+    assert_equal [ Globalize::Backend::Dummy, Globalize::Backend::Dummy, Globalize::Backend::Dummy ],
       I18n.backend.send(:backends).map{|backend| backend.class }
   end
-  
+
 end
 
 class TranslateChainedTest < ActiveSupport::TestCase
@@ -99,7 +99,7 @@ class TranslateChainedTest < ActiveSupport::TestCase
   end
 
   test "raises an InvalidLocale exception if the locale is nil" do
-    assert_raise( I18n::InvalidLocale ) { Globalize::Backend::Chain.new.translate nil, :foo }
+    assert_throws(:exception) { Globalize::Backend::Chain.new.translate nil, :foo }
   end
 
   test "bulk translates a number of keys from different backends" do
@@ -122,7 +122,7 @@ class TranslateChainedTest < ActiveSupport::TestCase
 end
 
 class CustomLocalizeBackend < I18n::Backend::Simple
-  def localize(locale, object, format = :default)
+  def localize(locale, object, format = :default, options = {})
     "result from custom localize backend" if locale == 'custom'
   end
 end
@@ -139,9 +139,9 @@ class LocalizeChainedTest < ActiveSupport::TestCase
   end
 
   test "delegates #localize to all backends in the order they were added" do
-    @first_backend.expects(:localize).with(:en, @time, :default)
-    @last_backend.expects(:localize).with(:en, @time, :default)
-    I18n.localize @time
+    @first_backend.expects(:localize).with(:en, @time, :default, {})
+    @last_backend.expects(:localize).with(:en, @time, :default, {}).returns @time.to_s
+    assert_equal @time.to_s, I18n.localize(@time)
   end
 
   test "returns the result from #localize from the first backend if test's not nil" do
@@ -161,7 +161,7 @@ class NamespaceChainedTest < ActiveSupport::TestCase
   def setup
     @backend = Globalize::Backend::Chain.new
   end
-  
+
   test "returns false if the given result is not a Hash" do
     assert !@backend.send(:namespace_lookup?, 'foo', {})
   end
@@ -172,5 +172,5 @@ class NamespaceChainedTest < ActiveSupport::TestCase
 
   test "returns true if the given result is a Hash AND no count option is present" do
     assert @backend.send(:namespace_lookup?, {:foo => 'foo'}, {})
-  end  
+  end
 end

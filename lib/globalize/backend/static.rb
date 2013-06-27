@@ -9,19 +9,30 @@ module Globalize
       def initialize(*args)
         add(*args) unless args.empty?
       end
-
       def translate(locale, key, options = {})
-        result, default, fallback = nil, options.delete(:default), nil
+        return super if options[:fallback]
+        default = extract_non_symbol_default!(options) if options[:default]
+
+        options[:fallback] = true
         I18n.fallbacks[locale].each do |fallback|
-          begin
-            result = super(fallback, key, options) and break
-          rescue I18n::MissingTranslationData
+          catch(:exception) do
+            result = super(fallback, key, options)
+            return result unless result.nil?
           end
         end
-        result ||= default locale, default, options
+        options.delete(:fallback)
 
-        attrs = {:requested_locale => locale, :locale => fallback, :key => key, :options => options}
-        translation(result, attrs) || raise(I18n::MissingTranslationData.new(locale, key, options))
+        return super(locale, nil, options.merge(:default => default)) if default
+        throw(:exception, I18n::MissingTranslation.new(locale, key, options))
+      end
+
+      def extract_non_symbol_default!(options)
+        defaults = [options[:default]].flatten
+        first_non_symbol_default = defaults.detect{|default| !default.is_a?(Symbol)}
+        if first_non_symbol_default
+          options[:default] = defaults[0, defaults.index(first_non_symbol_default)]
+        end
+        return first_non_symbol_default
       end
 
       protected
@@ -58,7 +69,6 @@ module Globalize
             end
           else
             result
-            # raise "unexpected translation type: #{result.inspect}"
           end
         end
     end

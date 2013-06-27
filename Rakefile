@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'rake'
 require 'rake/testtask'
 
@@ -7,6 +9,6 @@ task :default => :test
 desc 'Test the globalize2 plugin.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
-  t.pattern = ['test/*_test.rb', 'test/*/*_test.rb', 'test/*/*/*_test.rb']
-  t.verbose = true
+  t.test_files = ['test/*_test.rb', 'test/*/*_test.rb', 'test/*/*/*_test.rb']
+  t.verbose = false 
 end
