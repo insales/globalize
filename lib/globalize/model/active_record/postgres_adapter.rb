@@ -75,7 +75,7 @@ module Globalize
       private
 
       def fetch_attribute(locale, attr_name)
-        fallbacks = I18n.fallbacks[locale].map{|tag| tag.to_s}.map(&:to_sym)
+        fallbacks = I18n.ar_fallbacks[locale].map{|tag| tag.to_s}.map(&:to_sym)
 
         fallbacks.each do |fallback|
           next unless language = I18n.language(fallback)

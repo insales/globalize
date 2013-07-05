@@ -40,7 +40,7 @@ module Globalize
               def method_missing_with_translations(method, *args, &block) #:nodoc:
                 attribute = is_translation_finder?(method)
                 return method_missing_without_translations(method, *args, &block) unless attribute
-                I18n.fallbacks[I18n.locale].each do |locale|
+                I18n.ar_fallbacks[I18n.ar_locale].each do |locale|
                   next if locale.to_sym == :root
                   record =
                     if method.to_s.match(/^find_by_/)
@@ -78,7 +78,7 @@ module Globalize
           end
 
           def locale
-            (defined?(@@locale) && @@locale) || I18n.locale
+            (defined?(@@locale) && @@locale) || I18n.ar_locale
           end
         end
 

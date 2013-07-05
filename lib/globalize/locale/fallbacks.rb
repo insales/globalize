@@ -14,6 +14,11 @@ module I18n
     def fallbacks=(fallbacks) 
       @@fallbacks = fallbacks
     end
+
+    def reset_fallbacks
+      @@fallbacks = nil
+      self
+    end
   end
 end
 
@@ -47,11 +52,11 @@ module Globalize
           end
         end
       end
-      
+
       protected
 
       RECURSE_LEVEL = 2
-    
+
       def compute(tags, include_defaults = true, level = 1)
         result = Array(tags).collect do |tag|
           tags = LanguageTag::tag(tag.to_sym).parents(true).map! {|t| t.to_sym }

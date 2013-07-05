@@ -11,15 +11,19 @@ require File.join( File.dirname(__FILE__), '..', '..', 'data', 'post' )
 
 class TranslatedTest < ActiveSupport::TestCase
   def setup
+    I18n.default_locale = nil
     I18n.locale = :'en-US'
     I18n.languages = {:'en-US' => 0, :'de-DE' => 1, :'he-IL' => 2, :en => 3, :de => 4, :he => 5, :fr => 6, :es => 7}
-    I18n.fallbacks.clear
+    I18n.reset_fallbacks
+      .reset_ar_locale
+      .reset_ar_fallbacks
     reset_db! File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'data', 'schema.rb'))
     ActiveRecord::Base.locale = nil
   end
 
   def teardown
     I18n.fallbacks.clear
+    I18n.reset_ar_locale.reset_ar_fallbacks
   end
 
   test "modifiying translated fields" do
@@ -224,13 +228,18 @@ class TranslatedTest < ActiveSupport::TestCase
   end
 
   test "dynamic finders works with fallbacks" do
-    I18n.fallbacks.clear
-    I18n.fallbacks.map :'de-DE' => [ :'en-US' ]
     foo = Post.create :subject => 'foo'
     Post.create :subject => 'bar'
     I18n.locale = :'de-DE'
-    post = Post.find_by_subject('foo')
-    assert_equal foo, post
+    assert_nil Post.find_by_subject('foo')
+    I18n.fallbacks.clear
+    I18n.fallbacks.map :'de-DE' => [ :'en-US' ]
+    assert_equal foo, Post.find_by_subject('foo')
+    I18n.reset_fallbacks
+    I18n.fallbacks.map :'de-DE' => [ :'he-IL' ]
+    assert_nil Post.find_by_subject('foo')
+    I18n.ar_fallbacks(true).map :'de-DE' => [ :'en-US' ]
+    assert_equal foo, Post.find_by_subject('foo')
   end
 
   test 'change attribute on globalized model' do
@@ -292,6 +301,13 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_equal :es, ActiveRecord::Base.locale
     I18n.locale = :fr
     assert_equal :fr, I18n.locale
+    assert_equal :es, ActiveRecord::Base.locale
+    ActiveRecord::Base.locale = nil
+    assert_equal :fr, I18n.locale
+    assert_equal :fr, ActiveRecord::Base.locale
+    I18n.ar_locale = :es
+    assert_equal :fr, I18n.locale
+    assert_equal :es, I18n.ar_locale
     assert_equal :es, ActiveRecord::Base.locale
   end
 

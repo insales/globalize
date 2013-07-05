@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'globalize/translation'
 require 'globalize/locale/fallbacks'
+require 'globalize/locale/active_record'
 require 'globalize/model/active_record/languages'
 require 'globalize/model/active_record/postgres_adapter'
 require 'globalize/model/active_record/postgres_array'

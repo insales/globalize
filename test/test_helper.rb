@@ -15,7 +15,8 @@ class ActiveSupport::TestCase
       :host     => '127.0.0.1',
       :database => 'globalize2_test',
       :encoding => 'utf8',
-      :username => 'pgsql'
+      :username => 'pgsql',
+      :min_messages => 'WARNING',
     })
   end
   
