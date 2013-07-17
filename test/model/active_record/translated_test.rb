@@ -340,6 +340,23 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_nothing_raised { ActiveRecord::Base.locale }
   end
 
+  test '#translation_coalesce uses ar_fallbacks' do
+    I18n.languages[:root] = 0
+    I18n.locale = I18n.ar_locale = :en
+    I18n.fallbacks.map de: [:en]
+    I18n.ar_fallbacks(true).map de: [:en]
+    default = Post.translation_coalesce(:subject)
+    I18n.locale = :es
+    assert_equal default, Post.translation_coalesce(:subject)
+    I18n.ar_locale = :es
+    assert_not_equal default, Post.translation_coalesce(:subject)
+    I18n.locale = I18n.ar_locale = :en
+    I18n.fallbacks[:en] = [:es]
+    assert_equal default, Post.translation_coalesce(:subject)
+    I18n.ar_fallbacks[:en] = [:es]
+    assert_not_equal default, Post.translation_coalesce(:subject)
+  end
+
 #  TODO implement translated_locales
 #  test "translated_locales" do
 #    Post.locale = :de

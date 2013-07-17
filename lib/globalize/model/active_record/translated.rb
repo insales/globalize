@@ -95,7 +95,7 @@ module Globalize
           end
 
           def translation_coalesce(attr_name)
-            languages = I18n.fallbacks[I18n.locale].map{ |locale| I18n.language(locale) + 1}.uniq
+            languages = I18n.ar_fallbacks[I18n.ar_locale].map{ |locale| I18n.language(locale) + 1}.uniq
             field = "#{quoted_table_name}.#{connection.quote_column_name("#{attr_name}_translations")}"
             if languages.size > 1
             "COALESCE(#{languages.map{|language| "#{field}[#{language}]"}.join(',')})"
