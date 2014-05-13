@@ -227,6 +227,16 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_equal foo, post
   end
 
+  test "works with simple dynamic bang finders" do
+    foo = Post.create :subject => 'foo'
+    Post.create :subject => 'bar'
+    post = Post.find_by_subject!('foo')
+    assert_equal foo, post
+    assert_raise ActiveRecord::RecordNotFound do
+      Post.find_by_subject!('baz')
+    end
+  end
+
   test "dynamic finders works with fallbacks" do
     foo = Post.create :subject => 'foo'
     Post.create :subject => 'bar'

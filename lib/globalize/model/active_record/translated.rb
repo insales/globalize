@@ -38,13 +38,15 @@ module Globalize
             Callbacks.instance_methods.each {|cb| send cb }
             class << self
               def method_missing_with_translations(method, *args, &block) #:nodoc:
-                attribute = is_translation_finder?(method)
+                method_s = method.to_s
+                attribute = is_translation_finder?(method_s)
                 return method_missing_without_translations(method, *args, &block) unless attribute
                 I18n.ar_fallbacks[I18n.ar_locale].each do |locale|
                   next if locale.to_sym == :root
                   record =
-                    if method.to_s.match(/^find_by_/)
-                      first(:conditions => [ "#{translation_attribute(attribute, locale)} = ? ", args.first])
+                    if method_s.start_with?('find_by_')
+                      rel = where("#{translation_attribute(attribute, locale)} = ? ", args.first)
+                      method_s.end_with?('!') ? rel.first! : rel.first
                     else
                       if args.size > 1
                         all(:conditions => [ "#{translation_attribute(attribute, locale)} IN (?)", args])
@@ -59,8 +61,8 @@ module Globalize
               alias_method_chain :method_missing, :translations
 
               def is_translation_finder?(method)
-                return $1 if method.to_s =~ /^find_by_(\w+)$/ && globalize_options[:translated_attributes].include?($1.to_sym)
-                return $1 if method.to_s =~ /^find_all_by_(\w+)$/ && globalize_options[:translated_attributes].include?($1.to_sym)
+                return $1 if method.to_s =~ /^find_by_(\w+)!?$/ && globalize_options[:translated_attributes].include?($1.to_sym)
+                return $1 if method.to_s =~ /^find_all_by_(\w+)!?$/ && globalize_options[:translated_attributes].include?($1.to_sym)
               end
 
               def respond_to_with_translations(method, include_private = false)
