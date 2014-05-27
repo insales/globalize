@@ -45,8 +45,7 @@ module Globalize
                   next if locale.to_sym == :root
                   record =
                     if method_s.start_with?('find_by_')
-                      rel = where("#{translation_attribute(attribute, locale)} = ? ", args.first)
-                      method_s.end_with?('!') ? rel.first! : rel.first
+                      where("#{translation_attribute(attribute, locale)} = ? ", args.first).first
                     else
                       if args.size > 1
                         all(:conditions => [ "#{translation_attribute(attribute, locale)} IN (?)", args])
@@ -56,13 +55,14 @@ module Globalize
                     end
                   return record if record
                 end
+                raise ::ActiveRecord::RecordNotFound if method_s.end_with?('!')
                 return
               end
               alias_method_chain :method_missing, :translations
 
               def is_translation_finder?(method)
                 return $1 if method.to_s =~ /^find_by_(\w+)!?$/ && globalize_options[:translated_attributes].include?($1.to_sym)
-                return $1 if method.to_s =~ /^find_all_by_(\w+)!?$/ && globalize_options[:translated_attributes].include?($1.to_sym)
+                return $1 if method.to_s =~ /^find_all_by_(\w+)$/ && globalize_options[:translated_attributes].include?($1.to_sym)
               end
 
               def respond_to_with_translations(method, include_private = false)

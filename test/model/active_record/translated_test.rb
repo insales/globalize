@@ -252,6 +252,28 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_equal foo, Post.find_by_subject('foo')
   end
 
+  test "dynamic bang finders works with fallbacks" do
+    foo = Post.create :subject => 'foo'
+    Post.create :subject => 'bar'
+    I18n.locale = :'de-DE'
+    assert_raise ActiveRecord::RecordNotFound do
+      Post.find_by_subject!('foo')
+    end
+    I18n.fallbacks.clear
+    I18n.fallbacks.map :'de-DE' => [ :'en-US' ]
+    assert_equal foo, Post.find_by_subject!('foo')
+    I18n.reset_fallbacks
+    I18n.fallbacks.map :'de-DE' => [ :'he-IL' ]
+    assert_raise ActiveRecord::RecordNotFound do
+      Post.find_by_subject!('foo')
+    end
+    I18n.ar_fallbacks(true).map :'de-DE' => [ :'en-US' ]
+    assert_equal foo, Post.find_by_subject!('foo')
+    assert_raise ActiveRecord::RecordNotFound do
+      Post.find_by_subject!('baz')
+    end
+  end
+
   test 'change attribute on globalized model' do
     post = Post.create :subject => 'foo', :content => 'bar'
     assert_equal [], post.changed
