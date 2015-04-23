@@ -28,6 +28,9 @@ module Globalize
             klass.send :define_method, "#{attr_name}_changed?", lambda {
               attribute_changed? attr_name
             }
+            klass.send :define_method, "#{attr_name}_was", lambda {
+              changed_attributes[attr_name] if changed_attributes.include?(attr_name)
+            }
           end
         end
       end
