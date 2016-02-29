@@ -72,6 +72,7 @@ module Globalize
         def escape(str)
           return 'NULL' if str.nil?
           return "\"#{str}\"" if str.blank?
+          str = str.to_s
           unless str.match(/\{.+\}/)
             return str unless str.match(/[,"\\\n\r\s\t]/m)
           end
