@@ -52,6 +52,13 @@ module Globalize
         end
       end
 
+      def fetch_without_fallbacks(locale, attr_name)
+        return unless language = I18n.language(locale)
+        result = @stash.read(language, attr_name)
+        return unless result
+        Translation::Attribute.new(result, locale: locale, requested_locale: locale)
+      end
+
       def stash(locale, attr_name, value)
         attr_name = attr_name.to_sym
         language = I18n.language(locale)
