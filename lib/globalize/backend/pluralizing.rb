@@ -8,7 +8,7 @@ module Globalize
         return entry unless entry.is_a?(Hash) and count
         key = :zero if count == 0 && entry.has_key?(:zero)
         key ||= pluralizer(locale).call(count)
-        raise InvalidPluralizationData.new(entry, count) unless entry.has_key?(key)
+        raise I18n::InvalidPluralizationData.new(entry, count) unless entry.has_key?(key)
         translation entry[key], :plural_key => key
       end
 
