@@ -45,13 +45,13 @@ module Globalize
                   next if locale.to_sym == :root
                   record =
                     if method_s.start_with?('find_by_')
-                      where("#{translation_attribute(attribute, locale)} = ? ", args.first).first
+                      where("#{translation_coalesce(attribute)} = ? ", args.first).first
                     else
                       if args.size > 1
-                        all(:conditions => [ "#{translation_attribute(attribute, locale)} IN (?)", args])
+                        where("#{translation_coalesce(attribute)} IN (?)", args)
                       else
-                        all(:conditions => [ "#{translation_attribute(attribute, locale)} = ? ", args.first])
-                      end
+                        where("#{translation_coalesce(attribute)} = ? ", args.first)
+                      end.to_a
                     end
                   return record if record
                 end
