@@ -17,6 +17,15 @@ module Globalize
         pluralizers[locale.to_sym] = pluralizer
       end
 
+      def pluralizer(locale)
+        locale_sym = locale.to_sym
+        return pluralizers[locale_sym] if pluralizers[locale_sym]
+
+        pluralizer = I18n.t(:'i18n.plural.rule', :locale => locale_sym, :resolve => false, fallback: true)
+        pluralizer = nil if pluralizer.is_a?(::String)
+        pluralizers[locale_sym] = pluralizer
+      end
+
       protected
         def default_pluralizer
           pluralizers[:en]
