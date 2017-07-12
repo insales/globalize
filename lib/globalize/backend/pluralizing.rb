@@ -7,17 +7,14 @@ module Globalize
       def pluralize(locale, entry, count)
         return entry unless entry.is_a?(Hash) and count
         key = :zero if count == 0 && entry.has_key?(:zero)
-        key ||= pluralizer(locale).call(count)
+        pluralizer = pluralizer(locale) || default_pluralizer
+        key ||= pluralizer.call(count)
         raise I18n::InvalidPluralizationData.new(entry, count) unless entry.has_key?(key)
         translation entry[key], :plural_key => key
       end
 
       def add_pluralizer(locale, pluralizer)
         pluralizers[locale.to_sym] = pluralizer
-      end
-
-      def pluralizer(locale)
-        pluralizers[locale.to_sym] || default_pluralizer
       end
 
       protected
