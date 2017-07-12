@@ -41,7 +41,8 @@ module Globalize
         def interpolate(locale, string, values = {})
           result = orig_interpolate(locale, string, values)
           translation = translation(string)
-          translation.nil? ? result : translation.replace(result)
+          return result if translation.nil? || !translation.is_a?(::String)
+          translation.replace(result)
         end
 
         def translation(result, meta = nil)

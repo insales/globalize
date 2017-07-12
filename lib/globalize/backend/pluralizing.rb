@@ -7,7 +7,8 @@ module Globalize
       def pluralize(locale, entry, count)
         return entry unless entry.is_a?(Hash) and count
         key = :zero if count == 0 && entry.has_key?(:zero)
-        key ||= pluralizer(locale).call(count)
+        pluralizer = pluralizer(locale) || default_pluralizer
+        key ||= pluralizer.call(count)
         raise I18n::InvalidPluralizationData.new(entry, count) unless entry.has_key?(key)
         translation entry[key], :plural_key => key
       end
@@ -17,7 +18,12 @@ module Globalize
       end
 
       def pluralizer(locale)
-        pluralizers[locale.to_sym] || default_pluralizer
+        locale_sym = locale.to_sym
+        return pluralizers[locale_sym] if pluralizers[locale_sym]
+
+        pluralizer = I18n.t(:'i18n.plural.rule', :locale => locale_sym, :resolve => false, fallback: true)
+        pluralizer = nil if pluralizer.is_a?(::String)
+        pluralizers[locale_sym] = pluralizer
       end
 
       protected
