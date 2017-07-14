@@ -12,7 +12,7 @@ require File.join( File.dirname(__FILE__), '..', '..', 'data', 'post' )
 class StiTranslatedTest < ActiveSupport::TestCase
   def setup
     I18n.locale = :'en-US'
-    I18n.languages = {:'en-US' => 0, :'de-DE' => 1, :'he-IL' => 2}
+    I18n.languages = {:'en-US' => 0, en: 0, :'de-DE' => 1, :'he-IL' => 2, root: 0}
     I18n.fallbacks.clear
     reset_db! File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'data', 'schema.rb'))
   end

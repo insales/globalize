@@ -13,7 +13,7 @@ class TranslatedTest < ActiveSupport::TestCase
   def setup
     I18n.default_locale = nil
     I18n.locale = :'en-US'
-    I18n.languages = {:'en-US' => 0, :'de-DE' => 1, :'he-IL' => 2, :en => 3, :de => 4, :he => 5, :fr => 6, :es => 7}
+    I18n.languages = {:'en-US' => 0, :'de-DE' => 1, :'he-IL' => 2, :en => 3, :de => 4, :he => 5, :fr => 6, :es => 7, :root => 0}
     I18n.reset_fallbacks
       .reset_ar_locale
       .reset_ar_fallbacks
@@ -241,13 +241,16 @@ class TranslatedTest < ActiveSupport::TestCase
     foo = Post.create :subject => 'foo'
     Post.create :subject => 'bar'
     I18n.locale = :'de-DE'
+    I18n.fallbacks =  { :'de-DE' => [ :'de-DE' ] }
     assert_nil Post.find_by_subject('foo')
+    I18n.fallbacks = nil
     I18n.fallbacks.clear
     I18n.fallbacks.map :'de-DE' => [ :'en-US' ]
     assert_equal foo, Post.find_by_subject('foo')
     I18n.reset_fallbacks
-    I18n.fallbacks.map :'de-DE' => [ :'he-IL' ]
+    I18n.fallbacks =  { :'de-DE' => [ 'he-IL' ] }
     assert_nil Post.find_by_subject('foo')
+    I18n.fallbacks = nil
     I18n.ar_fallbacks(true).map :'de-DE' => [ :'en-US' ]
     assert_equal foo, Post.find_by_subject('foo')
   end
@@ -256,17 +259,20 @@ class TranslatedTest < ActiveSupport::TestCase
     foo = Post.create :subject => 'foo'
     Post.create :subject => 'bar'
     I18n.locale = :'de-DE'
+    I18n.fallbacks =  { :'de-DE' => [ :'de-DE' ] }
     assert_raise ActiveRecord::RecordNotFound do
       Post.find_by_subject!('foo')
     end
+    I18n.fallbacks = nil
     I18n.fallbacks.clear
     I18n.fallbacks.map :'de-DE' => [ :'en-US' ]
     assert_equal foo, Post.find_by_subject!('foo')
     I18n.reset_fallbacks
-    I18n.fallbacks.map :'de-DE' => [ :'he-IL' ]
+    I18n.fallbacks =  { :'de-DE' => [ 'he-IL' ] }
     assert_raise ActiveRecord::RecordNotFound do
       Post.find_by_subject!('foo')
     end
+    I18n.fallbacks = nil
     I18n.ar_fallbacks(true).map :'de-DE' => [ :'en-US' ]
     assert_equal foo, Post.find_by_subject!('foo')
     assert_raise ActiveRecord::RecordNotFound do
