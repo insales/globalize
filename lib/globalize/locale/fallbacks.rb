@@ -3,15 +3,15 @@ require 'globalize/locale/language_tag'
 
 module I18n
   @@fallbacks = nil
-    
+
   class << self
     # Returns the current fallbacks. Defaults to +Globalize::Locale::Fallbacks+.
     def fallbacks
       @@fallbacks ||= Globalize::Locale::Fallbacks.new
     end
-    
+
     # Sets the current fallbacks. Used to set a custom fallbacks instance.
-    def fallbacks=(fallbacks) 
+    def fallbacks=(fallbacks)
       @@fallbacks = fallbacks
     end
 
@@ -28,21 +28,21 @@ module Globalize
       def initialize(*defaults)
         @map = {}
         map defaults.pop if defaults.last.is_a?(Hash)
-        
+
         defaults = [I18n.default_locale.to_sym] if defaults.empty?
-        self.defaults = defaults 
+        self.defaults = defaults
       end
-      
+
       def defaults=(defaults)
         @defaults = defaults.map{|default| compute(default, false) }.flatten << :root
       end
       attr_reader :defaults
-      
+
       def [](tag)
         tag = tag.to_sym
         has_key?(tag) ? fetch(tag) : store(tag, compute(tag))
       end
-    
+
       def map(mappings)
         mappings.each do |from, to|
           from, to = from.to_sym, Array(to)
