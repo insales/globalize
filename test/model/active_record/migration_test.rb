@@ -23,9 +23,19 @@ class MigrationTest < ActiveSupport::TestCase
 
     columns = Post.connection.columns( :posts )
     assert subject = columns.detect {|c| c.name == 'subject_translations' }
-    assert_equal :string, subject.type
+    if defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::OID::Array)
+      assert_equal :text, subject.type
+      assert_true subject.array
+    else
+      assert_equal :string, subject.type
+    end
     assert content = columns.detect {|c| c.name == 'content_translations' }
-    assert_equal :string, content.type
+    if defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::OID::Array)
+      assert_equal :text, content.type
+      assert_true content.array
+    else
+      assert_equal :string, content.type
+    end
   end
 
   test 'globalize table dropped' do

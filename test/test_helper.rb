@@ -1,9 +1,11 @@
 # -*- encoding : utf-8 -*-
 require 'rubygems'
-require 'test/unit'
+require "test/unit/active_support"
 require 'active_support'
 require 'active_support/test_case'
 require 'mocha/setup'
+
+I18n.config.enforce_available_locales = false
 
 $LOAD_PATH << File.expand_path( File.dirname(__FILE__) + '/../lib' )
 
@@ -18,6 +20,7 @@ class ActiveSupport::TestCase
       :username => 'pgsql',
       :min_messages => 'WARNING',
     })
+    # ActiveRecord::Base.logger = Logger.new(STDOUT)
   end
   
   def reset_db!( schema_path )

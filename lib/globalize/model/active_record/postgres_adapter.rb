@@ -7,18 +7,26 @@ module Globalize
       end
 
       def contains?(language, attr_name)
-        self[attr_name] ||= ActiveRecord::PostgresArray.new(@record["#{attr_name}_translations"])
+        self[attr_name] ||= parse_attr attr_name
         self[attr_name][language]
       end
 
       def read(language, attr_name)
-        self[attr_name] ||= ActiveRecord::PostgresArray.new(@record["#{attr_name}_translations"])
+        self[attr_name] ||= parse_attr attr_name
         self[attr_name][language]
       end
 
       def write(language, attr_name, value)
-        self[attr_name] ||= ActiveRecord::PostgresArray.new(@record["#{attr_name}_translations"])
+        self[attr_name] ||= parse_attr attr_name
         self[attr_name][language] = value
+      end
+
+      def parse_attr attr_name
+        if defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::OID::Array)
+          @record["#{attr_name}_translations"] ? @record["#{attr_name}_translations"].dup : []
+        else
+          ActiveRecord::PostgresArray.new(@record["#{attr_name}_translations"])
+        end
       end
     end
 
@@ -68,7 +76,11 @@ module Globalize
 
       def update_translations!
         @stash.each do |attr, translations|
-          @record.send "#{attr}_translations=", translations.pg_string
+          if translations.is_a? Array
+            @record.send "#{attr}_translations=", translations
+          else
+            @record.send "#{attr}_translations=", translations.pg_string
+          end
         end
         @stash.clear
       end

@@ -16,7 +16,7 @@ module Globalize
           attr_names.each do |attr_name|
             klass.send :define_method, attr_name, lambda { |*arg|
               locale = arg.first
-              globalize.fetch locale || self.class.locale, attr_name
+              globalize.fetch(locale || self.class.locale, attr_name)
             }
             klass.send :define_method, "#{attr_name}=", lambda { |val|
               current = globalize.fetch_without_fallbacks(self.class.locale, attr_name)
