@@ -5,7 +5,7 @@ class Post < ActiveRecord::Base
 end
 
 class Blog < ActiveRecord::Base
-  has_many :posts, :order => 'id ASC'
+  has_many :posts
 end
 
 class Parent < ActiveRecord::Base

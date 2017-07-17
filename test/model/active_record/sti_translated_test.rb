@@ -32,9 +32,9 @@ class StiTranslatedTest < ActiveSupport::TestCase
     child = Child.create :content => 'foo'
     assert_equal [], child.changed
     child.content = 'bar'
-    assert_equal [ :content ], child.changed
+    assert_equal [ :content ], child.changed.map(&:to_sym)
     child.content = 'baz'
-    assert_member :content, child.changed
+    assert_member :content, child.changed.map(&:to_sym)
   end
 
   test 'change attribute on globalized model after locale switching' do
@@ -42,7 +42,7 @@ class StiTranslatedTest < ActiveSupport::TestCase
     assert_equal [], child.changed
     child.content = 'bar'
     I18n.locale = :de
-    assert_equal [ :content ], child.changed
+    assert_equal [ :content ], child.changed.map(&:to_sym)
   end
 
   test 'fallbacks with lots of locale switching' do

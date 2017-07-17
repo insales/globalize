@@ -8,9 +8,9 @@ Gem::Specification.new do |s|
   s.require_path  = 'lib'
   s.platform      = Gem::Platform::RUBY
 
-  s.add_dependency('activesupport', ['>= 3.1', '< 4.1'])
-  s.add_dependency('activerecord', ['>= 3.1', '< 4.1'])
-  s.add_dependency('actionpack', ['>= 3.1', '< 4.1'])
+  s.add_dependency('activesupport', ['>= 3.1', '< 4.2'])
+  s.add_dependency('activerecord', ['>= 3.1', '< 4.2'])
+  s.add_dependency('actionpack', ['>= 3.1', '< 4.2'])
 
   s.add_development_dependency('rake')
   s.add_development_dependency('mocha')

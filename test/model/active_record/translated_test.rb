@@ -284,10 +284,10 @@ class TranslatedTest < ActiveSupport::TestCase
     post = Post.create :subject => 'foo', :content => 'bar'
     assert_equal [], post.changed
     post.subject = 'baz'
-    assert_equal [ :subject ], post.changed
+    assert_equal [ :subject ], post.changed.map(&:to_sym)
     post.content = 'quux'
-    assert_member :subject, post.changed
-    assert_member :content, post.changed
+    assert_member :subject, post.changed.map(&:to_sym)
+    assert_member :content, post.changed.map(&:to_sym)
   end
 
   test 'change attribute on globalized model after locale switching' do
@@ -295,7 +295,7 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_equal [], post.changed
     post.subject = 'baz'
     I18n.locale = :de
-    assert_equal [ :subject ], post.changed
+    assert_equal [ :subject ], post.changed.map(&:to_sym)
   end
 
   # Противоречит тесту
