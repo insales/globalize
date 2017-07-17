@@ -22,14 +22,12 @@ class ActiveSupport::TestCase
     })
     # ActiveRecord::Base.logger = Logger.new(STDOUT)
   end
-  
+
   def reset_db!( schema_path )
     establish_connection_db
-    ::ActiveRecord::Base.silence do
-      load schema_path
-    end
+    load schema_path
   end
-  
+
   def assert_member(item, arr)
     assert_block "Item #{item} is not in array #{arr}" do
       arr.member? item
