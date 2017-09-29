@@ -2,17 +2,20 @@
 module Globalize
   module Model
     module ActiveRecord
-      class PostgresArray < String
+      class PostgresArray
         attr_accessor :string
 
         def initialize(str=nil)
           if !str.blank?
-            self.string = str
+            if str.is_a? Array
+              @array = str
+            else
+              self.string = str
+            end
           else
             @array = []
           end
           @continue = false
-          super str.to_s
         end
 
         def inspect
@@ -92,6 +95,14 @@ module Globalize
 
         def []=(index,value)
           elements[index] = value
+        end
+
+        def method_missing(name, *args, &block)
+          if elements.respond_to?(name)
+            elements.send(name, *args, &block)
+          else
+            super
+          end
         end
       end
     end

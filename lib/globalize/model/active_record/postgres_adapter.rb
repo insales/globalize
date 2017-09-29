@@ -22,11 +22,7 @@ module Globalize
       end
 
       def parse_attr attr_name
-        if defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::OID::Array)
-          @record["#{attr_name}_translations"] ? @record["#{attr_name}_translations"].dup : []
-        else
-          ActiveRecord::PostgresArray.new(@record["#{attr_name}_translations"])
-        end
+        @record.send("#{attr_name}_translations")
       end
     end
 
@@ -76,11 +72,8 @@ module Globalize
 
       def update_translations!
         @stash.each do |attr, translations|
-          if translations.is_a? Array
-            @record.send "#{attr}_translations=", translations
-          else
-            @record.send "#{attr}_translations=", translations.pg_string
-          end
+          current = @record.send "#{attr}_translations"
+          @record.send("#{attr}_translations=", translations) if current.to_a != translations.to_a
         end
         @stash.clear
       end
