@@ -6,7 +6,7 @@ require 'globalize/model/active_record/languages'
 require 'globalize/model/active_record/postgres_adapter'
 require 'globalize/model/active_record/postgres_array'
 require 'globalize/model/active_record/translated'
-require "globalize/model/active_record/uniqueness"
+require 'globalize/model/active_record/uniqueness'
 
 module Globalize
   module Model
