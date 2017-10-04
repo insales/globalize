@@ -2,17 +2,20 @@
 module Globalize
   module Model
     module ActiveRecord
-      class PostgresArray < String
+      class PostgresArray
         attr_accessor :string
 
-        def initialize(str=nil)
+        def initialize(str = nil)
           if !str.blank?
-            self.string = str
+            if str.is_a? Array
+              @array = str
+            else
+              self.string = str
+            end
           else
             @array = []
           end
           @continue = false
-          super str.to_s
         end
 
         def inspect
@@ -24,36 +27,36 @@ module Globalize
           @array = []
           s = string.dup
           number_of_nulls = 0
-          if s.match(/^\[(\d+):\d+\]=/)
-            number_of_nulls = $1.to_i - 1
+          if s =~ /^\[(\d+):\d+\]=/
+            number_of_nulls = Regexp.last_match(1).to_i - 1
             s.sub!(/^\[\d+:\d+\]=/, '')
           end
 
-          raise "Can't parse po stgres array '#{string}'" unless s[0] == '{'[0] && s[s.length-1] == '}'[0]
+          raise "Can't parse po stgres array '#{string}'" unless s[0] == '{'[0] && s[s.length - 1] == '}'[0]
           # вырезаем первый и последний символы
-          s = s[1..s.length-2]
+          s = s[1..s.length - 2]
           number_of_nulls.times { @array << 'NULL' }
           s.split(',').each do |element|
-            if is_first?(element)
+            if first?(element)
               @array << element
             else
               @array.last << ',' << element
             end
           end
-          @array = @array.map{|element| unescape(element)}
+          @array = @array.map { |element| unescape(element) }
         end
 
-        def is_first?(element='')
+        def first?(element = '')
           ret = !@continue
           if @continue
-            @continue = false if is_last(element)
-          else
-            @continue = true if element == '"' || (element[0] == '"' && !is_last(element))
+            @continue = false if last?(element)
+          elsif element == '"' || (element[0] == '"' && !last?(element))
+            @continue = true
           end
-          return ret
+          ret
         end
 
-        def is_last(element='')
+        def last?(element = '')
           return false if element[-1] != '"'
           count = 0
           index = -1
@@ -62,7 +65,7 @@ module Globalize
         end
 
         def pg_string
-          value = elements.map{|e| escape(e)}.join(',')
+          value = elements.map { |e| escape(e) }.join(',')
           # эскейпим {}, чтобы не было проблем с malformed array в pg
           value.gsub!(/{/, '\{')
           value.gsub!(/}/, '\}')
@@ -73,25 +76,33 @@ module Globalize
           return 'NULL' if str.nil?
           return "\"#{str}\"" if str.blank?
           str = str.to_s
-          unless str.match(/\{.+\}/)
-            return str unless str.match(/[,"\\\n\r\s\t]/m)
+          unless str =~ /\{.+\}/
+            return str unless str =~ /[,"\\\n\r\s\t]/m
           end
-          "\"#{str.gsub(/[\\"]/) {|s| "\\#{s}"}}\""
+          "\"#{str.gsub(/[\\"]/) { |s| "\\#{s}" }}\""
         end
 
         def unescape(str)
           return if str == 'NULL'
           return str if str[0] != '"'
           str = str[1..-2]
-          str.gsub(/\\(\\|")/,'\1')
+          str.gsub(/\\(\\|")/, '\1')
         end
 
         def [](index)
           elements[index]
         end
 
-        def []=(index,value)
+        def []=(index, value)
           elements[index] = value
+        end
+
+        def method_missing(name, *args, &block)
+          if elements.respond_to?(name)
+            elements.send(name, *args, &block)
+          else
+            super
+          end
         end
       end
     end

@@ -6,7 +6,7 @@ require 'globalize/model/active_record/languages'
 require 'globalize/model/active_record/postgres_adapter'
 require 'globalize/model/active_record/postgres_array'
 require 'globalize/model/active_record/translated'
-require "globalize/model/active_record/uniqueness"
+require 'globalize/model/active_record/uniqueness'
 
 module Globalize
   module Model
@@ -31,6 +31,26 @@ module Globalize
             }
             klass.send :define_method, "#{attr_name}_was", lambda {
               changed_attributes[attr_name] if changed_attributes.include?(attr_name)
+            }
+
+            klass.send :define_method, "#{attr_name}_translations", lambda {
+              value = self["#{attr_name}_translations"]
+              if defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::OID::Array)
+                value ? value.dup : []
+              else
+                ActiveRecord::PostgresArray.new(value).elements
+              end
+            }
+
+            klass.send :define_method, "#{attr_name}_translations=", lambda { |value|
+              self["#{attr_name}_translations"] =
+                if value.is_a? ActiveRecord::PostgresArray
+                  value.pg_string
+                elsif !defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::OID::Array) && value.is_a?(Array)
+                  ActiveRecord::PostgresArray.new(value).pg_string
+                else
+                  value
+                end
             }
           end
         end
