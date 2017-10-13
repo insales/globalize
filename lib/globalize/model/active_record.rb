@@ -36,7 +36,7 @@ module Globalize
             klass.send :define_method, "#{attr_name}_translations", lambda {
               value = self["#{attr_name}_translations"]
               if defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::OID::Array)
-                value ? value.dup : []
+                value ? value.deep_dup : []
               else
                 ActiveRecord::PostgresArray.new(value).elements
               end
