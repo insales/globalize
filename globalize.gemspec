@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.add_dependency('activesupport', ['>= 3.1', '< 4.2'])
   s.add_dependency('activerecord', ['>= 3.1', '< 4.2'])
   s.add_dependency('actionpack', ['>= 3.1', '< 4.2'])
+  s.add_dependency('i18n', '>= 0.8.5')
 
   s.add_development_dependency('rake')
   s.add_development_dependency('mocha')
