@@ -22,7 +22,7 @@ module Globalize
 
         def tag(tag)
           matches = parser.match(tag)
-          new *matches if matches
+          new(*matches) if matches
         end
       end
 
