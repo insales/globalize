@@ -209,9 +209,9 @@ class TranslatedTest < ActiveSupport::TestCase
     Blog.connection.schema_cache.clear!
     Blog.reset_column_information
     blog = Blog.create
-    post1 = blog.posts.create :subject => 'foo'
+    blog.posts.create :subject => 'foo'
     I18n.locale = 'de-DE'
-    post2 = blog.posts.create :subject => 'bar'
+    blog.posts.create :subject => 'bar'
     assert_equal 2, blog.posts.size
     I18n.locale = 'en-US'
     assert_equal 'foo', blog.posts.first.subject

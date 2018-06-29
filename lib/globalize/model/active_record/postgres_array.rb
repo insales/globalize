@@ -10,6 +10,7 @@ module Globalize
             if str.is_a? Array
               @array = str
             else
+              @array = nil
               self.string = str
             end
           else
@@ -77,7 +78,7 @@ module Globalize
           return "\"#{str}\"" if str.blank?
           str = str.to_s
           unless str =~ /\{.+\}/
-            return str unless str =~ /[,"\\\n\r\s\t]/m
+            return str unless str =~ /[,"\\\s]/m
           end
           "\"#{str.gsub(/[\\"]/) { |s| "\\#{s}" }}\""
         end

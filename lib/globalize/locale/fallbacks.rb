@@ -45,10 +45,10 @@ module Globalize
 
       def map(mappings)
         mappings.each do |from, to|
-          from, to = from.to_sym, Array(to)
-          to.each do |to|
+          from, to_list = from.to_sym, Array(to)
+          to_list.each do |to_item|
             @map[from] ||= []
-            @map[from] << to.to_sym
+            @map[from] << to_item.to_sym
           end
         end
       end
@@ -58,13 +58,14 @@ module Globalize
       RECURSE_LEVEL = 2
 
       def compute(tags, include_defaults = true, level = 1)
-        result = Array(tags).collect do |tag|
-          tags = LanguageTag::tag(tag.to_sym).parents(true).map! {|t| t.to_sym }
-          tags.each{|tag|
-            tags += compute(@map[tag], true, level + 1) if @map[tag] && level < RECURSE_LEVEL}
-          tags
-        end.flatten
-        result.push *defaults if include_defaults
+        result = Array(tags).flat_map do |item|
+          tag_list = LanguageTag.tag(item.to_sym).parents(true).map! { |t| t.to_sym }
+          tag_list.each do |tag|
+            tag_list += compute(@map[tag], true, level + 1) if @map[tag] && level < RECURSE_LEVEL
+          end
+          tag_list
+        end
+        result.push(*defaults) if include_defaults
         result.uniq
       end
     end

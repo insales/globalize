@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+require 'active_support/core_ext/object/deep_dup'
 require 'globalize/translation'
 require 'globalize/locale/fallbacks'
 require 'globalize/locale/active_record'

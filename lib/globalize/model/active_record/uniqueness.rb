@@ -6,11 +6,7 @@ module ActiveRecord
     class TranslationUniquenessValidator < ActiveModel::EachValidator
       def initialize(options)
         super(options.reverse_merge(:case_sensitive => true))
-      end
-
-      # Unfortunately, we have to tie Uniqueness validators to a class.
-      def setup(klass)
-        @klass = klass
+        @klass = options[:class]
       end
 
       def validate_each(record, attribute, value)
@@ -49,16 +45,33 @@ module ActiveRecord
       end
 
       def build_relation(klass, table, attribute, value) #:nodoc:
-        value    = klass.connection.case_sensitive_modifier(value)
+        value = klass.connection.case_sensitive_modifier(value, attribute)
         sql_attribute = klass.translation_coalesce(attribute)
-        relation = Arel::Nodes::Equality.new(Arel::Nodes::SqlLiteral.new(sql_attribute), value)
-        relation
+        Arel::Nodes::Equality.new(Arel::Nodes::SqlLiteral.new(sql_attribute), Arel::Nodes.build_quoted(value))
       end
     end
 
     module ClassMethods
       def validates_translation_uniqueness_of(*attr_names)
         validates_with TranslationUniquenessValidator, _merge_attributes(attr_names)
+      end
+    end
+  end
+
+  # Backward compatibility.
+  if VERSION::MAJOR < 4 || VERSION::MINOR < 1
+    class Validations::TranslationUniquenessValidator
+      # Unfortunately, we have to tie Uniqueness validators to a class.
+      def setup(klass)
+        @klass = klass
+      end
+
+      protected
+
+      def build_relation(klass, table, attribute, value) #:nodoc:
+        value = klass.connection.case_sensitive_modifier(value)
+        sql_attribute = klass.translation_coalesce(attribute)
+        Arel::Nodes::Equality.new(Arel::Nodes::SqlLiteral.new(sql_attribute), value)
       end
     end
   end
