@@ -51,22 +51,4 @@ module ActiveRecord
       end
     end
   end
-
-  # Backward compatibility.
-  if VERSION::MAJOR < 4 || VERSION::MINOR < 1
-    class Validations::TranslationUniquenessValidator
-      # Unfortunately, we have to tie Uniqueness validators to a class.
-      def setup(klass)
-        @klass = klass
-      end
-
-      protected
-
-      def build_relation(klass, table, attribute, value) #:nodoc:
-        value = klass.connection.case_sensitive_modifier(value)
-        sql_attribute = klass.translation_coalesce(attribute)
-        Arel::Nodes::Equality.new(Arel::Nodes::SqlLiteral.new(sql_attribute), value)
-      end
-    end
-  end
 end
