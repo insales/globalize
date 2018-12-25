@@ -13,12 +13,6 @@ module ActiveRecord
         finder_class = find_finder_class_for(record)
         table = finder_class.arel_table
 
-        coder = record.class.serialized_attributes[attribute.to_s]
-
-        if value && coder
-          value = coder.dump value
-        end
-
         relation = build_relation(finder_class, table, attribute, value)
         relation = relation.and(table[finder_class.primary_key.to_sym].not_eq(record.send(:id))) if record.persisted?
 
