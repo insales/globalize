@@ -13,12 +13,6 @@ module ActiveRecord
         finder_class = find_finder_class_for(record)
         table = finder_class.arel_table
 
-        coder = record.class.serialized_attributes[attribute.to_s]
-
-        if value && coder
-          value = coder.dump value
-        end
-
         relation = build_relation(finder_class, table, attribute, value)
         relation = relation.and(table[finder_class.primary_key.to_sym].not_eq(record.send(:id))) if record.persisted?
 
@@ -54,24 +48,6 @@ module ActiveRecord
     module ClassMethods
       def validates_translation_uniqueness_of(*attr_names)
         validates_with TranslationUniquenessValidator, _merge_attributes(attr_names)
-      end
-    end
-  end
-
-  # Backward compatibility.
-  if VERSION::MAJOR < 4 || VERSION::MINOR < 1
-    class Validations::TranslationUniquenessValidator
-      # Unfortunately, we have to tie Uniqueness validators to a class.
-      def setup(klass)
-        @klass = klass
-      end
-
-      protected
-
-      def build_relation(klass, table, attribute, value) #:nodoc:
-        value = klass.connection.case_sensitive_modifier(value)
-        sql_attribute = klass.translation_coalesce(attribute)
-        Arel::Nodes::Equality.new(Arel::Nodes::SqlLiteral.new(sql_attribute), value)
       end
     end
   end
