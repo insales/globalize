@@ -39,7 +39,6 @@ module ActiveRecord
       end
 
       def build_relation(klass, table, attribute, value) #:nodoc:
-        value = klass.connection.case_sensitive_modifier(value, attribute)
         sql_attribute = klass.translation_coalesce(attribute)
         Arel::Nodes::Equality.new(Arel::Nodes::SqlLiteral.new(sql_attribute), Arel::Nodes.build_quoted(value))
       end
