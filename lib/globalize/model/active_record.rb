@@ -15,6 +15,8 @@ module Globalize
       class << self
         def define_accessors(klass, attr_names)
           attr_names.each do |attr_name|
+            klass.send :attribute, attr_name
+
             klass.send :define_method, attr_name, lambda { |*arg|
               locale = arg.first
               globalize.fetch(locale || self.class.locale, attr_name)
