@@ -17,7 +17,7 @@ class ActiveSupport::TestCase
       :host     => '127.0.0.1',
       :database => 'globalize2_test',
       :encoding => 'utf8',
-      :username => 'pgsql',
+      :username => 'dborisov',
       :min_messages => 'WARNING',
     })
     # ActiveRecord::Base.logger = Logger.new(STDOUT)
