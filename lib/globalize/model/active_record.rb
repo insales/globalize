@@ -15,7 +15,7 @@ module Globalize
       class << self
         def define_accessors(klass, attr_names)
           attr_names.each do |attr_name|
-            klass.send :attribute, attr_name
+            klass.send :attribute, attr_name, :string
 
             klass.send :define_method, attr_name, lambda { |*arg|
               locale = arg.first
