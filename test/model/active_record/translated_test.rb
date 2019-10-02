@@ -50,6 +50,13 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_equal 'foo', (post.subject = 'foo')
   end
 
+  test "return the new value after modifiying backend field" do
+    post = Post.create :subject => 'foo'
+    assert_equal 'foo', post.subject
+    post.subject_translations = ['bar']
+    assert_equal 'bar', post.subject
+  end
+
   test "translates subject and content into en-US" do
     post = Post.create :subject => 'foo', :content => 'bar'
     assert_equal 'foo', post.subject
@@ -88,8 +95,8 @@ class TranslatedTest < ActiveSupport::TestCase
 
   test "update_attributes failure" do
     post = Post.create :subject => 'foo', :content => 'bar'
-    assert !post.update_attributes( { :subject => '' } )
-    assert_nil post.reload.attributes['subject']
+    assert !post.update_attributes(subject: '')
+    assert_equal 'foo', post.reload.attributes['subject']
     assert_equal 'foo', post.subject
   end
 

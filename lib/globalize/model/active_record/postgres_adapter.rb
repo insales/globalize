@@ -76,9 +76,14 @@ module Globalize
       end
 
       # Clears the cache
-      def clear
-        @cache.clear
-        @stash.clear
+      def clear(attr_name = nil)
+        if attr_name
+          @cache.delete(attr_name)
+          @stash.delete(attr_name)
+        else
+          @cache.clear
+          @stash.clear
+        end
       end
 
       private

@@ -46,6 +46,7 @@ module Globalize
             }
 
             klass.send :define_method, "#{attr_name}_translations=", lambda { |value|
+              globalize.clear attr_name
               self["#{attr_name}_translations"] =
                 if value.is_a? ActiveRecord::PostgresArray
                   value.pg_string
@@ -56,6 +57,12 @@ module Globalize
                 end
             }
           end
+
+          klass.send :define_method, :attributes, lambda {
+            attrs = super()
+            attr_names.each { |attr_name| attrs[attr_name.to_s] = send(attr_name) }
+            attrs
+          }
         end
       end
     end
