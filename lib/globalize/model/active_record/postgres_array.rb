@@ -3,9 +3,28 @@ module Globalize
   module Model
     module ActiveRecord
       class PostgresArray
-        attr_accessor :string
+        @@decode_method = :decode
 
-        def initialize(str = nil)
+        module PatchPG
+          def globalize_decode(value)
+            Globalize::Model::ActiveRecord::PostgresArray.new(value).to_a
+          end
+
+          def self.prepended(mod)
+            mod.alias_method :original_decode, :decode
+            mod.alias_method :decode, :globalize_decode
+          end
+        end
+
+        def self.patch_pg
+          PG::TextDecoder::Array.prepend PatchPG
+          @@decode_method = :original_decode
+        end
+
+        attr_accessor :string
+        attr_accessor :parser
+
+        def initialize(str = nil, parser = :new)
           if !str.blank?
             if str.is_a? Array
               @array = str
@@ -16,6 +35,7 @@ module Globalize
           else
             @array = []
           end
+          @parser = parser
           @continue = false
         end
 
@@ -25,7 +45,11 @@ module Globalize
 
         def elements
           return @array if @array
-          @array = []
+          @array = parser == :new ? new_parse : old_parse
+        end
+
+        def old_parse
+          array = []
           s = string.dup
           number_of_nulls = 0
           if s =~ /^\[(\d+):\d+\]=/
@@ -33,18 +57,33 @@ module Globalize
             s.sub!(/^\[\d+:\d+\]=/, '')
           end
 
-          raise "Can't parse po stgres array '#{string}'" unless s[0] == '{'[0] && s[s.length - 1] == '}'[0]
+          raise "Can't parse postgres array '#{string}'" unless s[0] == '{'[0] && s[s.length - 1] == '}'[0]
           # вырезаем первый и последний символы
           s = s[1..s.length - 2]
-          number_of_nulls.times { @array << 'NULL' }
+          number_of_nulls.times { array << 'NULL' }
           s.split(',').each do |element|
             if first?(element)
-              @array << element
+              array << element
             else
-              @array.last << ',' << element
+              array.last << ',' << element
             end
           end
-          @array = @array.map { |element| unescape(element) }
+          array.map { |element| unescape(element) }
+        end
+
+        def new_parse
+          s = string
+          number_of_nulls = 0
+          if s[0] == '['
+            delimiter_index = s.index(':')
+            raise "Can't parse postgres array '#{string}'" if delimiter_index == -1
+            number_of_nulls = s[1..delimiter_index-1].to_i - 1
+
+            array = Array.new(number_of_nulls)
+            array + PG::TextDecoder::Array.new(delimiter: ',').send(@@decode_method, s)
+          else
+            PG::TextDecoder::Array.new(delimiter: ',').send(@@decode_method, s)
+          end
         end
 
         def first?(element = '')
@@ -96,6 +135,10 @@ module Globalize
 
         def []=(index, value)
           elements[index] = value
+        end
+
+        def to_a
+          elements.to_a
         end
 
         def method_missing(name, *args, &block)
