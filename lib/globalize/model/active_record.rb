@@ -29,12 +29,6 @@ module Globalize
             klass.send :define_method, "#{attr_name}_set", lambda {|val, locale|
               globalize.stash locale || self.class.locale, attr_name, val
             }
-            klass.send :define_method, "#{attr_name}_changed?", lambda {
-              attribute_changed? attr_name
-            }
-            klass.send :define_method, "#{attr_name}_was", lambda {
-              changed_attributes[attr_name] if changed_attributes.include?(attr_name)
-            }
 
             klass.send :define_method, "#{attr_name}_translations", lambda {
               value = self["#{attr_name}_translations"]
