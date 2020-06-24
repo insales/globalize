@@ -11,8 +11,10 @@ module Globalize
           end
 
           def self.prepended(mod)
-            mod.alias_method :original_decode, :decode
-            mod.alias_method :decode, :globalize_decode
+            mod.class_eval <<-RUBY
+              alias_method :original_decode, :decode
+              alias_method :decode, :globalize_decode
+            RUBY
           end
         end
 
