@@ -22,7 +22,7 @@ module Globalize
               globalize.fetch(locale || self.class.locale, attr_name)
             }
             klass.send :define_method, "#{attr_name}=", lambda { |val|
-              val = send("#{attr_name}_translations_set_by_hash", val) if val.is_a? Hash
+              val = send("#{attr_name}_translations_json=", val) if val.is_a? Hash
               current = globalize.fetch_without_fallbacks(self.class.locale, attr_name)
               attribute_will_change!(attr_name) if current != val
               globalize.stash self.class.locale, attr_name, val
@@ -30,7 +30,23 @@ module Globalize
             klass.send :define_method, "#{attr_name}_set", lambda { |val, locale|
               globalize.stash locale || self.class.locale, attr_name, val
             }
-            klass.send :define_method, "#{attr_name}_translations_set_by_hash", lambda { |val|
+            klass.send :define_method, "#{attr_name}_translations_json", lambda {
+              available_locales = I18n.available_locales
+              translations = send "#{attr_name}_translations"
+              hash = {}
+              translations.each_with_index do |text, index|
+                hash[available_locales[index]] = text
+              end
+              hash.to_json
+            }
+            klass.send :define_method, "#{attr_name}_translations_json=", lambda { |val|
+              unless val.is_a? Hash
+                begin
+                  val = JSON.parse(val)
+                rescue JSON::ParserError
+                  return
+                end
+              end
               translations = send "#{attr_name}_translations"
               available_locales = {}
               I18n.available_locales.each_with_index { |locale, index| available_locales[locale] = index }
