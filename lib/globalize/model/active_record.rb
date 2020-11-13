@@ -22,12 +22,31 @@ module Globalize
               globalize.fetch(locale || self.class.locale, attr_name)
             }
             klass.send :define_method, "#{attr_name}=", lambda { |val|
+              send("#{attr_name}_translations_hash=", val) and return if val.is_a? Hash
+
               current = globalize.fetch_without_fallbacks(self.class.locale, attr_name)
               attribute_will_change!(attr_name) if current != val
               globalize.stash self.class.locale, attr_name, val
             }
-            klass.send :define_method, "#{attr_name}_set", lambda {|val, locale|
+            klass.send :define_method, "#{attr_name}_set", lambda { |val, locale|
               globalize.stash locale || self.class.locale, attr_name, val
+            }
+            klass.send :define_method, "#{attr_name}_translations_hash", lambda {
+              translations = send "#{attr_name}_translations"
+              hash = {}
+              translations.each_with_index do |text, index|
+                hash[I18n.locale_by_index(index)] = text
+              end
+              hash
+            }
+            klass.send :define_method, "#{attr_name}_translations_hash=", lambda { |val|
+              translations = send "#{attr_name}_translations"
+              val.each do |key, text|
+                index = I18n.language(key.to_sym)
+                next unless index
+                translations[index] = text
+              end
+              send "#{attr_name}_translations=", translations
             }
 
             klass.send :define_method, "#{attr_name}_translations", lambda {
