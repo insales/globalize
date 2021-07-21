@@ -22,7 +22,7 @@ module Globalize
               globalize.fetch(locale || self.class.locale, attr_name)
             }
             klass.send :define_method, "#{attr_name}=", lambda { |val|
-              send("#{attr_name}_translations_hash=", val) and return if val.is_a? Hash
+              return send("#{attr_name}_translations_hash=", val) if val.is_a? Hash
 
               current = globalize.fetch_without_fallbacks(self.class.locale, attr_name)
               attribute_will_change!(attr_name) if current != val
@@ -75,6 +75,12 @@ module Globalize
             attrs = super()
             attr_names.each { |attr_name| attrs[attr_name.to_s] = send(attr_name) }
             attrs
+          }
+
+          klass.send :define_method, :_read_attribute, lambda { |attr|
+            return send(attr) if attr_names.include?(attr.to_sym)
+
+            super attr
           }
         end
       end

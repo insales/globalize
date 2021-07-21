@@ -33,6 +33,8 @@ class StiTranslatedTest < ActiveSupport::TestCase
     assert_equal [], child.changed
     child.content = 'bar'
     assert_equal [ :content ], child.changed.map(&:to_sym)
+    assert_equal 'foo', child.content_was
+    assert_equal({ 'content' => %w[foo bar] }, child.changes)
     child.content = 'baz'
     assert_member :content, child.changed.map(&:to_sym)
   end
