@@ -11,8 +11,8 @@ module Globalize
           end
 
           def self.prepended(mod)
-            mod.alias_method :original_decode, :decode
-            mod.alias_method :decode, :globalize_decode
+            mod.send(:alias_method, :original_decode, :decode)
+            mod.send(:alias_method, :decode, :globalize_decode)
           end
         end
 
