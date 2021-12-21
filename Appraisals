@@ -1,7 +1,4 @@
-appraise 'rails_40' do
-  gem 'activesupport', '~> 4.0.0'
-  gem 'pg', '< 1'
-end
+# frozen_string_literal: true
 
 appraise 'rails_42' do
   gem 'activesupport', '~> 4.2.0'

@@ -18,7 +18,7 @@ class ActiveSupport::TestCase
       encoding: 'utf8',
       username: 'postgres',
       min_messages: 'WARNING',
-      port: '15432'
+      port: '54321'
     )
     # ActiveRecord::Base.logger = Logger.new(STDOUT)
   end
