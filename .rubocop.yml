@@ -1,0 +1,11 @@
+require:
+ - rubocop-rails
+ - rubocop-rspec
+ - rubocop-performance
+inherit_from:
+  - https://raw.githubusercontent.com/insales/code_style/master/ruby/rubocop.yml
+  - https://raw.githubusercontent.com/insales/code_style/master/ruby/rubocop_rails.yml
+
+AllCops:
+  TargetRubyVersion: 2.6
+  TargetRailsVersion: 5.2

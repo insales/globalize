@@ -1,0 +1,50 @@
+name: Test
+on: [push]
+jobs:
+  runTests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          # EKAM
+          - ruby-version: 2.5.8
+            rails-version: 52
+          # InSales, 1C
+          - ruby-version: 2.6.6
+            rails-version: 52
+
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/rails_${{ matrix.rails-version }}.gemfile
+
+    services:
+      postgres:
+        image: postgres:12-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ""
+          POSTGRES_DB: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 54321:5432
+    steps:
+      - uses: actions/checkout@master
+      - name: Install ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+
+      - name: Create databases
+        env:
+          RAILS_ENV: test
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPORT: 54321
+        run: sudo -u postgres createdb -h localhost -p 54321 -U postgres globalize2_test
+
+      - name: Run tests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bundle exec appraisal rails_${{ matrix.rails-version }} rake test

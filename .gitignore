@@ -3,3 +3,4 @@ Gemfile.lock
 *.gemfile.lock
 *.sublime-project
 *.sublime-workspace
+.rubocop-*
