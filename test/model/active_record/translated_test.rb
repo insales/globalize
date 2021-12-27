@@ -95,7 +95,7 @@ class TranslatedTest < ActiveSupport::TestCase
 
   test "update failure" do
     post = Post.create :subject => 'foo', :content => 'bar'
-    assert !post.update(subject: '')
+    assert_not post.update(subject: '')
     assert_equal 'foo', post.reload.attributes['subject']
     assert_equal 'foo', post.subject
   end
