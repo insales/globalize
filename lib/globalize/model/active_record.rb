@@ -21,13 +21,16 @@ module Globalize
               locale = arg.first
               globalize.fetch(locale || self.class.locale, attr_name)
             }
+
             klass.send :define_method, "#{attr_name}=", lambda { |val|
               return send("#{attr_name}_translations_hash=", val) if val.is_a? Hash
 
               current = globalize.fetch_without_fallbacks(self.class.locale, attr_name)
               attribute_will_change!(attr_name) if current != val
               globalize.stash self.class.locale, attr_name, val
+              super(val)
             }
+
             klass.send :define_method, "#{attr_name}_set", lambda { |val, locale|
               globalize.stash locale || self.class.locale, attr_name, val
             }
