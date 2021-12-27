@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   s.add_dependency('activesupport', ['>= 4.0', '<= 7.0.0'])
   s.add_dependency('i18n', '>= 0.8.5')
 
-  s.add_development_dependency('rake')
   s.add_development_dependency('mocha')
+  s.add_development_dependency('rake')
   s.add_development_dependency('pg')
   s.add_development_dependency('test-unit-activesupport')
 end

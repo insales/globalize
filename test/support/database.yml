@@ -1,0 +1,7 @@
+test_db:
+  adapter: postgresql
+  host: 127.0.0.1
+  database: globalize2_test
+  encoding: utf8
+  username: postgres
+  port: 5432
