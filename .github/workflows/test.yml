@@ -13,6 +13,14 @@ jobs:
           # InSales, 1C
           - ruby-version: 2.6.6
             rails-version: 52
+          - ruby-version: 2.6.6
+            rails-version: 60
+          - ruby-version: 2.6.6
+            rails-version: 61
+          - ruby-version: 2.7.5
+            rails-version: 61
+          - ruby-version: 2.7.5
+            rails-version: 70
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/rails_${{ matrix.rails-version }}.gemfile
@@ -26,7 +34,7 @@ jobs:
           POSTGRES_DB: postgres
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
-          - 54321:5432
+          - 5432:5432
     steps:
       - uses: actions/checkout@master
       - name: Install ruby
