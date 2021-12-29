@@ -1,4 +1,5 @@
-# -*- encoding : utf-8 -*-
+# frozen_string_literal: true
+
 require File.join( File.dirname(__FILE__), '..', '..', 'test_helper' )
 require 'active_record'
 require 'globalize/model/active_record'
@@ -10,10 +11,6 @@ ActiveRecord::Base.send(:include, Globalize::Model::ActiveRecord::Translated)
 require File.join( File.dirname(__FILE__), '..', '..', 'data', 'post' )
 
 class PostgresArrayTest < ActiveSupport::TestCase
-  def setup
-    establish_connection_db
-  end
-
   test "works with simple dynamic finders" do
     array = Globalize::Model::ActiveRecord::PostgresArray.new('{abc,def}')
     assert_equal array[0], 'abc'
