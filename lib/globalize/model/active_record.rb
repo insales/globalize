@@ -28,7 +28,7 @@ module Globalize
               current = globalize.fetch_without_fallbacks(self.class.locale, attr_name)
               attribute_will_change!(attr_name) if current != val
               globalize.stash self.class.locale, attr_name, val
-              super(val)
+              write_attribute(attr_name, val)
             }
 
             klass.send :define_method, "#{attr_name}_set", lambda { |val, locale|
