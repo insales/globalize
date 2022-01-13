@@ -297,6 +297,19 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_member :content, post.changed.map(&:to_sym)
   end
 
+  test 'does not change attribute on globalized model if assigned same value' do
+    post = Post.create subject: 'foo', content: 'bar'
+    assert_equal [], post.changed
+    post.reload
+    post.subject = 'foo'
+    assert_equal [], post.changed
+    assert_equal 'foo', post.subject_was
+    post.reload
+    post.content = 'bar'
+    assert_equal [], post.changed
+    assert_equal 'bar', post.content_was
+  end
+
   test 'change attribute on globalized model after locale switching' do
     post = Post.create :subject => 'foo', :content => 'bar'
     assert_equal [], post.changed
