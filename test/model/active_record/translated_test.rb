@@ -297,7 +297,7 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_member :content, post.changed.map(&:to_sym)
   end
 
-  test 'does not change attribute on globalized model if assigned same value' do
+  test 'does not change attribute on globalized model if assigned same value on creating' do
     post = Post.create subject: 'foo', content: 'bar'
     assert_equal [], post.changed
     post.reload
@@ -305,6 +305,18 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_equal [], post.changed
     assert_equal 'foo', post.subject_was
     post.reload
+    post.content = 'bar'
+    assert_equal [], post.changed
+    assert_equal 'bar', post.content_was
+  end
+
+  test 'does not change attribute on globalized model if assigned same value on reading' do
+    post_id = Post.create(subject: 'foo', content: 'bar').id
+    post = Post.find post_id
+    post.subject = 'foo'
+    assert_equal [], post.changed
+    assert_equal 'foo', post.subject_was
+    post = Post.find post_id
     post.content = 'bar'
     assert_equal [], post.changed
     assert_equal 'bar', post.content_was
