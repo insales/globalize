@@ -160,7 +160,7 @@ module Globalize
 
             # При вызове reload от модели виртуальные атрибуты (установленые через attribute) сбрасываются,
             #   а atrribute_was начинает возвращать nil.
-            # HACK: здесь заново присваиваем значения, #  а после цикла сбрасываем изменения, как будто их не было
+            # HACK: здесь заново присваиваем значения, а после цикла сбрасываем изменения, как будто их не было
             globalize_options[:translated_attributes].each do |attr_name|
               write_attribute(attr_name, globalize.fetch_without_fallbacks(self.class.locale, attr_name))
             end
