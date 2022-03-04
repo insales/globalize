@@ -74,6 +74,8 @@ module Globalize
             }
 
             klass.send :after_initialize, lambda {
+              return if new_record?
+
               public_send("#{attr_name}=", globalize.fetch_without_fallbacks(self.class.locale, attr_name))
               clear_attribute_changes(Array(attr_name))
             }

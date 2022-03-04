@@ -322,6 +322,11 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_equal 'bar', post.content_was
   end
 
+  test 'change attribute on initializing' do
+    post = Post.new(subject: 'foo')
+    assert_equal ['subject'], post.changed
+  end
+
   test 'change attribute on globalized model after locale switching' do
     post = Post.create :subject => 'foo', :content => 'bar'
     assert_equal [], post.changed
