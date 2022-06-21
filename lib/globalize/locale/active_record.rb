@@ -9,6 +9,8 @@ module I18n
     end
 
     def ar_locale=(val)
+      raise ::ArgumentError, "No language for locale `#{val}'" if !val.nil? && !I18n.language(val)
+
       @@ar_locale = val
     end
 

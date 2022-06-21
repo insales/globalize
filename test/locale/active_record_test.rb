@@ -6,6 +6,10 @@ include Globalize::Locale
 I18n.default_locale = :'en-US'    # This has to be set explicitly, no longer default for I18n
 
 class ActiveRecordLocaleTest < ActiveSupport::TestCase
+  def setup
+    I18n.languages = { en: 2, es: 1, fr: 1 }
+  end
+
   def teardown
     I18n.reset_ar_locale
   end
@@ -22,11 +26,16 @@ class ActiveRecordLocaleTest < ActiveSupport::TestCase
     assert_equal :en, I18n.locale
     assert_equal :en, I18n.ar_locale
   end
+
+  test 'raises on missing locale' do
+    assert_raise(ArgumentError) { I18n.ar_locale = 'unknown' }
+  end
 end
 
 class ActiveRecordFallbacksTest < ActiveSupport::TestCase
   def setup
     I18n.reset_fallbacks
+    I18n.languages = { es: 1, fr: 1 }
   end
 
   def teardown
