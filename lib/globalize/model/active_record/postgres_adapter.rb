@@ -38,12 +38,16 @@ module Globalize
 
       def contains?(locale, attr_name)
         language = I18n.language(locale)
+        return false unless language
+
         @cache.contains?(language, attr_name.to_sym)
       end
 
       def fetch(locale, attr_name)
         attr_name = attr_name.to_sym
         language = I18n.language(locale)
+        return unless language
+
         is_cached = @cache.contains?(language, attr_name)
         is_cached ? @cache.read(language, attr_name) : begin
           value = fetch_attribute locale, attr_name
@@ -63,6 +67,8 @@ module Globalize
       def stash(locale, attr_name, value)
         attr_name = attr_name.to_sym
         language = I18n.language(locale)
+        raise_no_language(locale) unless language
+
         @stash.write language, attr_name, value
         @cache.write language, attr_name, value
       end
@@ -87,6 +93,13 @@ module Globalize
       end
 
       private
+
+      def raise_no_language(locale)
+        raise(
+          ArgumentError,
+          "No language found for locale `#{locale}'. List available languages by running `I18n.languages` in console"
+        )
+      end
 
       def fetch_attribute(locale, attr_name)
         fallbacks = I18n.ar_fallbacks[locale].map(&:to_s).map(&:to_sym)
