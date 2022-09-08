@@ -53,7 +53,9 @@ module Globalize
             }
 
             klass.send :define_method, "#{attr_name}_translations", lambda {
-              value = self["#{attr_name}_translations"]
+              # cannot use [attr] because of ActiveModel::MissingAttributeError in rails 6.1+
+              value = read_attribute("#{attr_name}_translations") { nil }
+
               if defined?(::ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::OID::Array)
                 value ? value.deep_dup : []
               else
