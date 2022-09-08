@@ -244,6 +244,13 @@ class TranslatedTest < ActiveSupport::TestCase
     end
   end
 
+  test "works when translations field is not selected" do
+    post = Post.create subject: 'bar'
+    # subject_translations etc. not selected
+    slim_post = Post.select(:id, :blog_id).find(post.id)
+    assert_equal(nil, slim_post.subject)
+  end
+
   test "dynamic finders works with fallbacks" do
     foo = Post.create :subject => 'foo'
     Post.create :subject => 'bar'
