@@ -21,9 +21,9 @@ module ActiveRecord
           relation = relation.and(table[scope_item].eq(scope_value))
         end
 
-        if finder_class.unscoped.where(relation).exists?
-          record.errors.add(attribute, :taken, options.except(:scope).merge(:value => value))
-        end
+        return unless finder_class.unscoped.where(relation).exists?
+
+        record.errors.add(attribute, :taken, **options.except(:scope), value: value)
       end
 
     protected
