@@ -170,6 +170,6 @@ class PostgresArrayTest < ActiveSupport::TestCase
 
  "}'
     array = Globalize::Model::ActiveRecord::PostgresArray.new(string)
-    assert_equal array.pg_string, string.gsub(/}/, '\}').gsub(/{/, '\{').sub(/\A\\/, '').gsub(/\\}\z/, '}')
+    assert_equal array.pg_string, string.gsub(/}/, '\}').gsub(/{/, '\{').delete_prefix('\\').gsub(/\\}\z/, '}')
   end
 end

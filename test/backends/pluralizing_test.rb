@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'globalize/backend/pluralizing'
 
@@ -8,7 +10,7 @@ class PluralizingTest < ActiveSupport::TestCase
       if c == 1
         :one
       else
-        (2..4).include?(c) ? :few : :other
+        (2..4).cover?(c) ? :few : :other
       end
     }
   end
@@ -34,7 +36,7 @@ class PluralizePluralizingTest < ActiveSupport::TestCase
       if c == 1
         :one
       else
-        (2..4).include?(c) ? :few : :other
+        (2..4).cover?(c) ? :few : :other
       end
     }
     @backend.store_translations :en, foo: { one: 'one en foo', other: 'many en foos' }
@@ -57,7 +59,7 @@ class CzPluralizingTest < ActiveSupport::TestCase
       if c == 1
         :one
       else
-        (2..4).include?(c) ? :few : :other
+        (2..4).cover?(c) ? :few : :other
       end
     }
     @backend.store_translations :en, foo: { one: 'one en foo', other: 'many en foos' }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'globalize/backend/chain'
 
@@ -49,7 +51,7 @@ class AddChainedTest < ActiveSupport::TestCase
     assert_nothing_raised { I18n.backend.add Globalize::Backend::Dummy.new, Globalize::Backend::Dummy, :dummy }
     assert_instance_of Globalize::Backend::Dummy, I18n.backend.send(:backends).first
     assert_equal([Globalize::Backend::Dummy, Globalize::Backend::Dummy, Globalize::Backend::Dummy],
-                 I18n.backend.send(:backends).map { |backend| backend.class })
+                 I18n.backend.send(:backends).map(&:class))
   end
 end
 
