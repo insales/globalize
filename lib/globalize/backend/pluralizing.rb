@@ -35,7 +35,7 @@ module Globalize
         end
 
         # Overwrite this method to return something other than a String
-        def translation(string, attributes)
+        def translation(string, _attributes)
           string
         end
     end

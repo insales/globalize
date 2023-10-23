@@ -1,5 +1,4 @@
-# -*- encoding : utf-8 -*-
-require File.join( File.dirname(__FILE__), '..', 'test_helper' )
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'globalize/i18n/missing_translations_log_handler'
 
 class MissingTranslationsTest < ActiveSupport::TestCase
@@ -13,12 +12,16 @@ class MissingTranslationsTest < ActiveSupport::TestCase
 end
 
 class TestLogger < String
-  def warn(msg) self.concat msg; end
+  def warn(msg)
+    concat msg
+  end
 end
 
 class LogMissingTranslationsTest < ActiveSupport::TestCase
   def setup
-    @locale, @key, @options = :en, :foo, {}
+    @locale = :en
+    @key = :foo
+    @options = {}
     @exception = I18n::MissingTranslationData.new(@locale, @key, @options)
 
     @logger = TestLogger.new

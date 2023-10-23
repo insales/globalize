@@ -10,7 +10,7 @@
 #   I18n.exception_handler = :missing_translations_raise_handler
 module I18n
   class << self
-    def missing_translations_raise_handler(exception, locale, key, options)
+    def missing_translations_raise_handler(exception, _locale, _key, _options)
       raise exception
     end
   end
