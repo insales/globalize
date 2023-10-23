@@ -88,6 +88,6 @@ class StaticTest < ActiveSupport::TestCase
   end
 
   test "makes sure interpolation does not break even with False as string" do
-    assert_equal "translation missing: en.support.array.skip_last_comma", I18n.translate(:"support.array.skip_last_comma")
+    assert_equal "Translation missing: en.support.array.skip_last_comma", I18n.translate(:"support.array.skip_last_comma")
   end
 end
