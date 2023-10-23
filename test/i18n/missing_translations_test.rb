@@ -1,5 +1,6 @@
-# -*- encoding : utf-8 -*-
-require File.join( File.dirname(__FILE__), '..', 'test_helper' )
+# frozen_string_literal: true
+
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'globalize/i18n/missing_translations_log_handler'
 
 class MissingTranslationsTest < ActiveSupport::TestCase
@@ -13,12 +14,16 @@ class MissingTranslationsTest < ActiveSupport::TestCase
 end
 
 class TestLogger < String
-  def warn(msg) self.concat msg; end
+  def warn(msg)
+    concat msg
+  end
 end
 
 class LogMissingTranslationsTest < ActiveSupport::TestCase
   def setup
-    @locale, @key, @options = :en, :foo, {}
+    @locale = :en
+    @key = :foo
+    @options = {}
     @exception = I18n::MissingTranslationData.new(@locale, @key, @options)
 
     @logger = TestLogger.new
@@ -27,11 +32,11 @@ class LogMissingTranslationsTest < ActiveSupport::TestCase
 
   test "still returns the exception message for MissingTranslationData exceptions" do
     result = I18n.send(:missing_translations_log_handler, @exception, @locale, @key, @options)
-    assert_equal 'translation missing: en.foo', result
+    assert_equal 'Translation missing: en.foo', result
   end
 
   test "logs the missing translation to I18n.missing_translations_logger" do
     I18n.send(:missing_translations_log_handler, @exception, @locale, @key, @options)
-    assert_equal 'translation missing: en.foo', @logger
+    assert_equal 'Translation missing: en.foo', @logger
   end
 end

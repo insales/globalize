@@ -9,3 +9,5 @@ inherit_from:
 AllCops:
   TargetRubyVersion: 2.6
   TargetRailsVersion: 5.2
+
+Rails/I18nLocaleAssignment: { Enabled: false } # TODO: enable?

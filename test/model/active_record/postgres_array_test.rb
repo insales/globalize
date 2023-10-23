@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require File.join( File.dirname(__FILE__), '..', '..', 'test_helper' )
+require File.join(File.dirname(__FILE__), '..', '..', 'test_helper')
 require 'active_record'
 require 'globalize/model/active_record'
 
 # Hook up model translation
-ActiveRecord::Base.send(:include, Globalize::Model::ActiveRecord::Translated)
+ActiveSupport.on_load(:active_record) { include Globalize::Model::ActiveRecord::Translated }
 
 # Load Post model
-require File.join( File.dirname(__FILE__), '..', '..', 'data', 'post' )
+require_relative '../../data/models'
 
 class PostgresArrayTest < ActiveSupport::TestCase
   test "works with simple dynamic finders" do
@@ -48,7 +48,7 @@ class PostgresArrayTest < ActiveSupport::TestCase
   end
 
   test "double escape" do
-    array = Globalize::Model::ActiveRecord::PostgresArray.new()
+    array = Globalize::Model::ActiveRecord::PostgresArray.new
     array[0] = 'Фирменная майка "Поставим продажи на рельсы"'
     assert_equal array.pg_string, '{"Фирменная майка \\"Поставим продажи на рельсы\\""}'
   end
@@ -170,7 +170,6 @@ class PostgresArrayTest < ActiveSupport::TestCase
 
  "}'
     array = Globalize::Model::ActiveRecord::PostgresArray.new(string)
-    assert_equal array.pg_string, string.gsub(/}/, '\}').gsub(/{/, '\{').sub(/\A\\/,'').gsub(/\\}\z/,'}')
+    assert_equal array.pg_string, string.gsub(/}/, '\}').gsub(/{/, '\{').delete_prefix('\\').gsub(/\\}\z/, '}')
   end
-
 end

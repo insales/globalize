@@ -30,7 +30,7 @@ module I18n
       @@missing_translations_logger = logger
     end
 
-    def missing_translations_log_handler(exception, locale, key, options)
+    def missing_translations_log_handler(exception, _locale, _key, _options)
       if MissingTranslationData === exception
         missing_translations_logger.warn(exception.message)
         return exception.message

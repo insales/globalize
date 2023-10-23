@@ -50,7 +50,7 @@ module Globalize
       def parents(include_self = true)
         result, parent = [], self.dup
         result << parent if include_self
-        while parent = parent.parent
+        while (parent = parent.parent)
           result << parent
         end
         result

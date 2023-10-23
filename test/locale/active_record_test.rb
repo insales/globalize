@@ -1,5 +1,6 @@
-# -*- encoding : utf-8 -*-
-require File.join( File.dirname(__FILE__), '..', 'test_helper' )
+# frozen_string_literal: true
+
+require File.join(File.dirname(__FILE__), '..', 'test_helper')
 require 'globalize/locale/fallbacks'
 
 include Globalize::Locale
@@ -44,14 +45,14 @@ class ActiveRecordFallbacksTest < ActiveSupport::TestCase
 
   test 'fallback to I18n.fallbacks' do
     I18n.fallbacks[:es] = [:en]
-    assert_equal({es: [:en]}, I18n.fallbacks)
-    assert_equal({es: [:en]}, I18n.ar_fallbacks)
+    assert_equal({ es: [:en] }, I18n.fallbacks)
+    assert_equal({ es: [:en] }, I18n.ar_fallbacks)
     I18n.ar_fallbacks(true)[:de] = [:fr]
-    assert_equal({es: [:en]}, I18n.fallbacks)
-    assert_equal({de: [:fr]}, I18n.ar_fallbacks)
+    assert_equal({ es: [:en] }, I18n.fallbacks)
+    assert_equal({ de: [:fr] }, I18n.ar_fallbacks)
     I18n.reset_ar_fallbacks
     I18n.fallbacks[:en] = [:us]
-    assert_equal({es: [:en], en: [:us]}, I18n.fallbacks)
-    assert_equal({es: [:en], en: [:us]}, I18n.ar_fallbacks)
+    assert_equal({ es: [:en], en: [:us] }, I18n.fallbacks)
+    assert_equal({ es: [:en], en: [:us] }, I18n.ar_fallbacks)
   end
 end

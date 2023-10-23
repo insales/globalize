@@ -1,12 +1,12 @@
-# -*- encoding : utf-8 -*-
+# frozen_string_literal: true
+
 # This schema creates tables without columns for the translated fields
-ActiveRecord::Schema.define do  
-  create_table :blogs, :force => true do |t|
-    t.string :name
+ActiveRecord::Schema.define do
+  create_table :blogs, force: true do |tbl|
+    tbl.string :name
   end
 
-  create_table :posts, :force => true do |t|
-    t.references :blog
+  create_table :posts, force: true do |tbl|
+    tbl.references :blog
   end
 end
-  

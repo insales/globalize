@@ -6,6 +6,7 @@ require 'active_support/test_case'
 
 class ActiveSupport::TestCase
   def reset_db!(schema_path)
+    ActiveRecord::Migration.verbose = false
     load schema_path
   end
 
