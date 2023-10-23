@@ -12,7 +12,6 @@ gemspec
 # gem 'rake'
 # gem 'test-unit-activesupport'
 
-
 unless defined?(Appraisal)
   group :lint do
     gem 'rubocop'

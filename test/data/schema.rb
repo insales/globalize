@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 ActiveRecord::Schema.define do
-  create_table :blogs, force: true do |t|
-    t.string      :description
+  create_table :blogs, force: true do |tbl|
+    tbl.string :description
   end
 
-  create_table :posts, force: true do |t|
-    t.column      :subject_translations, 'text[]'
-    t.column      :content_translations, 'text[]'
-    t.references :blog
+  create_table :posts, force: true do |tbl|
+    tbl.column :subject_translations, 'text[]'
+    tbl.column :content_translations, 'text[]'
+    tbl.references :blog
   end
 
-  create_table :parents, force: true do |t|
-    t.column      :type_translations,    'text[]'
-    t.column      :content_translations, 'text[]'
+  create_table :parents, force: true do |tbl|
+    tbl.column :type_translations,    'text[]'
+    tbl.column :content_translations, 'text[]'
   end
 end

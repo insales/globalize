@@ -8,6 +8,8 @@ Gem::Specification.new do |s|
   s.require_path  = 'lib'
   s.platform      = Gem::Platform::RUBY
 
+  s.metadata['rubygems_mfa_required'] = 'true'
+
   s.add_dependency('actionpack', ['>= 4.0', '< 7.2'])
   s.add_dependency('activerecord', ['>= 4.0', '< 7.2'])
   s.add_dependency('activesupport', ['>= 4.0', '< 7.2'])

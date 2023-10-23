@@ -5,7 +5,7 @@ require 'active_record'
 require 'globalize/model/active_record'
 
 # Hook up model translation
-ActiveRecord::Base.include Globalize::Model::ActiveRecord::Translated
+ActiveSupport.on_load(:active_record) { include Globalize::Model::ActiveRecord::Translated }
 
 # Load Post model
 require_relative '../../data/models'

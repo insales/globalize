@@ -6,11 +6,11 @@ require 'globalize/backend/pluralizing'
 class PluralizingTest < ActiveSupport::TestCase
   def setup
     @backend = Globalize::Backend::Pluralizing.new
-    @cz_pluralizer = lambda { |c|
-      if c == 1
+    @cz_pluralizer = lambda { |count|
+      if count == 1
         :one
       else
-        (2..4).cover?(c) ? :few : :other
+        (2..4).cover?(count) ? :few : :other
       end
     }
   end
@@ -32,11 +32,11 @@ end
 class PluralizePluralizingTest < ActiveSupport::TestCase
   def setup
     @backend = Globalize::Backend::Pluralizing.new
-    @cz_pluralizer = lambda { |c|
-      if c == 1
+    @cz_pluralizer = lambda { |count|
+      if count == 1
         :one
       else
-        (2..4).cover?(c) ? :few : :other
+        (2..4).cover?(count) ? :few : :other
       end
     }
     @backend.store_translations :en, foo: { one: 'one en foo', other: 'many en foos' }
@@ -55,11 +55,11 @@ end
 class CzPluralizingTest < ActiveSupport::TestCase
   def setup
     @backend = Globalize::Backend::Pluralizing.new
-    @cz_pluralizer = lambda { |c|
-      if c == 1
+    @cz_pluralizer = lambda { |count|
+      if count == 1
         :one
       else
-        (2..4).cover?(c) ? :few : :other
+        (2..4).cover?(count) ? :few : :other
       end
     }
     @backend.store_translations :en, foo: { one: 'one en foo', other: 'many en foos' }

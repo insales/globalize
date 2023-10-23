@@ -26,18 +26,19 @@ module Globalize
       end
 
       protected
-        def default_pluralizer
-          pluralizers[:en]
-        end
 
-        def pluralizers
-          @pluralizers ||= { :en => lambda{|n| n == 1 ? :one : :other } }
-        end
+      def default_pluralizer
+        pluralizers[:en]
+      end
 
-        # Overwrite this method to return something other than a String
-        def translation(string, _attributes)
-          string
-        end
+      def pluralizers
+        @pluralizers ||= { en: ->(num) { num == 1 ? :one : :other } }
+      end
+
+      # Overwrite this method to return something other than a String
+      def translation(string, _attributes)
+        string
+      end
     end
   end
 end
