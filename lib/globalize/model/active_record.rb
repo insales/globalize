@@ -26,7 +26,6 @@ module Globalize
               return send("#{attr_name}_translations_hash=", val) if val.is_a? Hash
 
               current = globalize.fetch_without_fallbacks(self.class.locale, attr_name)
-              attribute_will_change!(attr_name) if current != val
               globalize.stash self.class.locale, attr_name, val
               write_attribute(attr_name, val)
             }

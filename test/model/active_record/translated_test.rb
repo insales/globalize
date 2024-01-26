@@ -345,6 +345,16 @@ class TranslatedTest < ActiveSupport::TestCase
     assert_equal [:subject], post.changed.map(&:to_sym)
   end
 
+  test 'clear changed flag after return original value' do
+    post = Post.create subject: 'foo', content: 'bar'
+    assert_equal [], post.changed
+    original_subject = post.subject
+    post.subject = 'foo!'
+    assert_equal ['subject'], post.changed
+    post.subject = original_subject
+    assert_equal [], post.changed
+  end
+
   # Противоречит тесту
   # "resolves a complex fallback without reloading"
   test 'fallbacks with lots of locale switching' do
