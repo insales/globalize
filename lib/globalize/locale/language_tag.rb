@@ -1,4 +1,5 @@
-# -*- encoding : utf-8 -*-
+# frozen_string_literal: true
+
 # for specifications see http://en.wikipedia.org/wiki/IETF_language_tag
 #
 # SimpleParser does not implement advanced usages such as grandfathered tags

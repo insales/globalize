@@ -1,4 +1,5 @@
-# -*- encoding : utf-8 -*-
+# frozen_string_literal: true
+
 require 'globalize/load_path'
 require 'globalize/backend/static'
 require 'globalize/model/active_record'

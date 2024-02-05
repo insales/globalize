@@ -1,4 +1,5 @@
-# -*- encoding : utf-8 -*-
+# frozen_string_literal: true
+
 require 'active_support/core_ext/object/deep_dup'
 require 'globalize/translation'
 require 'globalize/locale/fallbacks'
