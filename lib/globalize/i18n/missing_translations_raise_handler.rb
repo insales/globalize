@@ -1,4 +1,5 @@
-# -*- encoding : utf-8 -*-
+# frozen_string_literal: true
+
 # A simple exception handler that behaves like the default exception handler
 # but also raises on missing translations.
 #

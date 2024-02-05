@@ -1,4 +1,5 @@
-# -*- encoding : utf-8 -*-
+# frozen_string_literal: true
+
 module I18n
   @@ar_fallbacks  = nil
   @@ar_locale     = nil
