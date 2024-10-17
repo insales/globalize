@@ -12,7 +12,7 @@ class StaticTest < ActiveSupport::TestCase
   def setup
     I18n.backend = Globalize::Backend::Static.new
     translations = {
-      'en-US': { foo: "foo in en-US", boz: 'boz', buz: { bum: 'bum' } },
+      'en-US': { foo: "foo in en-US", boz: 'boz', buz: { bum: 'bum' }, interpolated: 'interpolated en %<str>s' },
       en: { bar: "bar in en" },
       'de-DE': { baz: "baz in de-DE" },
       de: { boo: "boo in de", number: { currency: { format: { unit: '€', format: '%n %u' } } } }
@@ -23,8 +23,22 @@ class StaticTest < ActiveSupport::TestCase
     I18n.fallbacks.map 'de-DE': :'en-US', he: :en
   end
 
-  test "returns an instance of Translation:Static" do
+  test "returns an instance of Translation:Static or String" do
     translation = I18n.t :foo
+    assert_equal "foo in en-US", translation
+
+    # TODO: is it needed? maybe provide option to disable this wrapper?
+    # in i18n 1.14.3+ this is String (not interpolated when no placeholders), in 1.14.1 Globalize::Translation::Static
+    if Gem::Version.new(I18n::VERSION) <= '1.14.1'
+      assert_instance_of Globalize::Translation::Static, translation
+    else
+      assert_instance_of String, translation
+    end
+  end
+
+  test "interpolated translation returns an instance of Translation:Static" do
+    translation = I18n.t :interpolated, str: 'lala'
+    assert_equal "interpolated en lala", translation
     assert_instance_of Globalize::Translation::Static, translation
   end
 
