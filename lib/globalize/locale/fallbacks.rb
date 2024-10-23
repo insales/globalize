@@ -3,21 +3,19 @@
 require 'globalize/locale/language_tag'
 
 module I18n
-  @@fallbacks = nil
-
   class << self
     # Returns the current fallbacks. Defaults to +Globalize::Locale::Fallbacks+.
     def fallbacks
-      @@fallbacks ||= Globalize::Locale::Fallbacks.new
+      Thread.current[:fallbacks] ||= Globalize::Locale::Fallbacks.new
     end
 
     # Sets the current fallbacks. Used to set a custom fallbacks instance.
     def fallbacks=(fallbacks)
-      @@fallbacks = fallbacks
+      Thread.current[:fallbacks] = fallbacks
     end
 
     def reset_fallbacks
-      @@fallbacks = nil
+      Thread.current[:fallbacks] = nil
       self
     end
   end

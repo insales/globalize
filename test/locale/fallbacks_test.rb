@@ -36,6 +36,17 @@ class FallbacksTest < ActiveSupport::TestCase
     I18n.fallbacks = Fallbacks.new(:'fi-FI', :'se-FI')
     assert_equal(%i[fi-FI fi se-FI se root], I18n.fallbacks.defaults)
   end
+
+  test "thread safety" do
+    I18n.fallbacks[:es] = [:en]
+    assert_equal({ es: [:en] }, I18n.fallbacks)
+    thread = Thread.new do
+      I18n.fallbacks[:en] = [:us]
+      assert_equal({ en: [:us] }, I18n.fallbacks)
+    end
+    thread.join
+    assert_equal({ es: [:en] }, I18n.fallbacks)
+  end
 end
 
 class NoMappingFallbacksTest < ActiveSupport::TestCase

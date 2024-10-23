@@ -31,6 +31,22 @@ class ActiveRecordLocaleTest < ActiveSupport::TestCase
   test 'raises on missing locale' do
     assert_raise(ArgumentError) { I18n.ar_locale = 'unknown' }
   end
+
+  test 'thread safety' do
+    I18n.locale = :es
+    I18n.ar_locale = :es
+    assert_equal :es, I18n.locale
+    assert_equal :es, I18n.ar_locale
+    thread = Thread.new do
+      I18n.locale = :fr
+      I18n.ar_locale = :fr
+      assert_equal :fr, I18n.locale
+      assert_equal :fr, I18n.ar_locale
+    end
+    thread.join
+    assert_equal :es, I18n.locale
+    assert_equal :es, I18n.ar_locale
+  end
 end
 
 class ActiveRecordFallbacksTest < ActiveSupport::TestCase
@@ -54,5 +70,16 @@ class ActiveRecordFallbacksTest < ActiveSupport::TestCase
     I18n.fallbacks[:en] = [:us]
     assert_equal({ es: [:en], en: [:us] }, I18n.fallbacks)
     assert_equal({ es: [:en], en: [:us] }, I18n.ar_fallbacks)
+  end
+
+  test 'thread safety' do
+    I18n.ar_fallbacks = { es: [:en] }
+    assert_equal({ es: [:en] }, I18n.ar_fallbacks)
+    thread = Thread.new do
+      I18n.ar_fallbacks = { de: [:fr] }
+      assert_equal({ de: [:fr] }, I18n.ar_fallbacks)
+    end
+    thread.join
+    assert_equal({ es: [:en] }, I18n.ar_fallbacks)
   end
 end

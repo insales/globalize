@@ -431,8 +431,6 @@ class TranslatedTest < ActiveSupport::TestCase
   end
 
   test "access content locale before setting" do
-    Globalize::Model::ActiveRecord::Translated::ActMethods.class_eval "remove_class_variable(:@@locale)", __FILE__,
-                                                                      __LINE__ - 1
     assert_nothing_raised { ActiveRecord::Base.locale }
   end
 

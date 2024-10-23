@@ -75,11 +75,11 @@ module Globalize
           end
 
           def locale=(locale)
-            @@locale = locale
+            Thread.current[:locale] = locale
           end
 
           def locale
-            (defined?(@@locale) && @@locale) || I18n.ar_locale
+            Thread.current[:locale] || I18n.ar_locale
           end
         end
 
