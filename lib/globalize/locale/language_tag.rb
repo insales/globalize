@@ -14,11 +14,11 @@ module Globalize
     class LanguageTag < Struct.new(*Rfc4646::SUBTAGS)
       class << self
         def parser
-          @@parser ||= SimpleParser
+          Thread.current[:parser] ||= SimpleParser
         end
 
         def parser=(parser)
-          @@parser = parser
+          Thread.current[:parser] = parser
         end
 
         def tag(tag)
